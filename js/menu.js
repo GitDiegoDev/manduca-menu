@@ -507,6 +507,8 @@ class CartManager {
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Enviando...';
             }
+            
+            console.log("ORDER DATA REAL:", JSON.stringify(orderData, null, 2));
 
             await ApiService.request('/menu/orders', {
                 method: 'POST',
