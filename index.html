@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Digital - MANDUCÁ</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="img/logo.webp" alt="Manducá - Alimento Rico" class="logo-image">
+            </div>
+            <div class="header-actions">
+                <button class="btn-search" id="btnSearch" aria-label="Buscar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+                <button class="btn-cart" id="btnCart" aria-label="Carrito">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Search Bar (Hidden by default) -->
+        <div class="search-bar" id="searchBar">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Buscar productos..." class="search-input">
+                <button class="btn-search-close" id="btnSearchClose">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Categories Navigation -->
+        <nav class="categories-nav" id="categoriesNav">
+            <div class="categories-container">
+                <button class="category-btn active" data-category="all">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>Todos</span>
+                </button>
+                <!-- Las categorías se cargarán dinámicamente aquí -->
+            </div>
+        </nav>
+
+        <!-- Products Grid -->
+        <section class="products-section">
+            <div class="products-header">
+                <h2 class="section-title" id="categoryTitle">Todos los Productos</h2>
+                <p class="products-count" id="productsCount">Cargando productos...</p>
+            </div>
+            
+            <!-- Loading State -->
+            <div class="loading-state" id="loadingState">
+                <div class="spinner"></div>
+                <p>Cargando productos...</p>
+            </div>
+
+            <!-- Products Grid Container -->
+            <div class="products-grid" id="productsGrid">
+                <!-- Los productos se cargarán dinámicamente aquí -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <h3>No se encontraron productos</h3>
+                <p>Intenta buscar con otros términos o explora nuestras categorías.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer-inner">
+            <div class="footer-block">
+                <h4>Manducá</h4>
+                <p>Alimento rico <br>
+                     hecho con dedicación para cada cliente.</p>
+                
+            </div>
+            <div class="footer-block">
+                <h4>Información</h4>
+                <p><strong>Empresa:</strong> Manducá</p>
+                <p><strong>Canal:</strong> Menú digital </p>
+                
+            </div>
+            <div class="footer-block">
+                <h4>Desarrollo</h4>
+                
+            </div>
+        </div>
+        <div class="site-footer-meta">
+            <span>© 2026 Manducá</span>
+            
+        </div>
+    </footer>
+
+    <!-- Shopping Cart Sidebar -->
+    <aside class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2>Tu Pedido</h2>
+            <button class="btn-close-cart" id="btnCloseCart" aria-label="Cerrar carrito">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <div class="cart-body">
+            <!-- Empty Cart State -->
+            <div class="cart-empty" id="cartEmpty">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <h3>Tu carrito está vacío</h3>
+                <p>Agrega productos a tu pedido</p>
+            </div>
+
+            <!-- Cart Items Container -->
+            <div class="cart-items" id="cartItems">
+                <!-- Los items del carrito se cargarán dinámicamente aquí -->
+            </div>
+        </div>
+
+        <div class="cart-footer">
+            <!-- Cart Summary -->
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span id="cartSubtotal">$0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Envío:</span>
+                    <span id="cartShipping">A calcular</span>
+                </div>
+                <div class="summary-row summary-total">
+                    <span>Total:</span>
+                    <span id="cartTotal">$0.00</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="cart-actions">
+                <button class="btn btn-secondary" id="btnClearCart">
+                    Vaciar Carrito
+                </button>
+                <button class="btn btn-primary" id="btnCheckout">
+                    Realizar Pedido
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="btnCloseModal" aria-label="Cerrar">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            
+            <div class="modal-body" id="modalBody">
+                <!-- El contenido del modal se cargará dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal" id="checkoutModal">
+        <div class="modal-overlay" id="checkoutOverlay"></div>
+        <div class="modal-content checkout-modal-content">
+            <button class="modal-close" id="btnCloseCheckout" aria-label="Cerrar">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+
+            <div class="modal-body">
+                <h3 class="checkout-title">Datos para tu pedido</h3>
+                <p class="checkout-summary" id="checkoutSummary"></p>
+                <form id="checkoutForm" class="checkout-form">
+                    <label for="checkoutCustomerName">Nombre</label>
+                    <input type="text" id="checkoutCustomerName" maxlength="255" required placeholder="Ej: Juan Pérez">
+
+                    <label for="checkoutDeliveryType">Tipo de entrega</label>
+                    <select id="checkoutDeliveryType" required>
+                        <option value="local">Retiro en local</option>
+                        <option value="delivery">Envío</option>
+                    </select>
+
+                    <div id="checkoutAddressGroup" class="checkout-address-group hidden">
+                        <label for="checkoutAddress">Dirección de entrega</label>
+                        <textarea id="checkoutAddress" rows="2" placeholder="Calle, número, barrio"></textarea>
+                    </div>
+
+                    <label for="checkoutNotes">Notas (opcional)</label>
+                    <textarea id="checkoutNotes" rows="3" maxlength="500" placeholder="Indicaciones para cocina o entrega"></textarea>
+
+                    <div class="checkout-actions">
+                        <button type="button" class="btn btn-secondary" id="btnCancelCheckout">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Enviar pedido</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/menu.js"></script>
+</body>
+</html>
