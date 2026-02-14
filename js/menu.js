@@ -482,13 +482,21 @@ class CartManager {
             delivery_type: deliveryType,
             delivery_address: deliveryType === 'delivery' ? deliveryAddress : null,
             notes,
-            items: AppState.cart.map(item => ({
-                type: item.type === 'daily' ? 'daily' : 'product',
-                id: item.id,
-                name: item.name,
-                quantity: item.quantity,
-                unit_price: item.price
-            }))
+            items: AppState.cart.map(item => {
+                const itemData = {
+                    name: item.name,
+                    quantity: item.quantity,
+                    unit_price: item.price
+                };
+
+                if (item.type === 'daily') {
+                    itemData.daily_dish_id = item.id;
+                } else {
+                    itemData.product_id = item.id;
+                }
+
+                return itemData;
+            })
         };
 
         const submitBtn = this.checkoutForm.querySelector('button[type="submit"]');
@@ -563,9 +571,10 @@ class ProductsManager {
         const response = await ApiService.getMenu();
 
         // ---- SITE ----
-        const siteName = document.querySelector('.logo-text');
-        if (siteName) {
-            siteName.textContent = response.site.name;
+        const siteLogo = document.querySelector('.logo-image');
+        if (siteLogo) {
+            siteLogo.alt = response.site.name;
+            siteLogo.title = response.site.name;
         }
 
         if (!response.site.is_open) {
@@ -660,11 +669,11 @@ if (response.daily_dishes && response.daily_dishes.length > 0) {
     render() {
     let html = '';
 
-    // â­ PLATO DEL DÃA - SOLO EN "TODOS"
+    // ⭐ PLATO DEL DÍA - SOLO EN "TODOS"
     if (AppState.dailyDishes.length > 0 && AppState.selectedCategory === 'all') {
         html += `
             <div class="daily-dishes">
-                <h2 class="section-title">â Plato del día</h2>
+                <h2 class="section-title">⭐ Plato del día</h2>
                 <div class="products-grid">
                     ${AppState.dailyDishes.map(p =>
                         this.createProductCard({
@@ -685,7 +694,14 @@ if (response.daily_dishes && response.daily_dishes.length > 0) {
     }
 
     if (hasProducts) {
-        html += AppState.filteredProducts
+        let productsToShow = AppState.filteredProducts;
+
+        // Si estamos en "Todos", no duplicar platos del día que ya se muestran arriba
+        if (AppState.selectedCategory === 'all' && AppState.dailyDishes.length > 0) {
+            productsToShow = productsToShow.filter(p => p.type !== 'daily');
+        }
+
+        html += productsToShow
             .map(product => this.createProductCard(product))
             .join('');
     }
