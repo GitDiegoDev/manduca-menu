@@ -478,26 +478,19 @@ class CartManager {
         }
 
         const orderData = {
-            customer_name: customerName,
-            delivery_type: deliveryType,
-            delivery_address: deliveryType === 'delivery' ? deliveryAddress : null,
-            notes,
-            items: AppState.cart.map(item => {
-                const itemData = {
-                    name: item.name,
-                    quantity: item.quantity,
-                    unit_price: item.price
-                };
-
-                if (item.type === 'daily') {
-                    itemData.daily_dish_id = item.id;
-                } else {
-                    itemData.product_id = item.id;
-                }
-
-                return itemData;
-            })
-        };
+    customer_name: customerName,
+    delivery_type: deliveryType,
+    delivery_address: deliveryType === 'delivery' ? deliveryAddress : null,
+    notes,
+    items: AppState.cart.map(item => ({
+        type: item.type === 'daily' ? 'daily' : 'product',
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        unit_price: item.price
+    }))
+};
+;
 
         const submitBtn = this.checkoutForm.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn ? submitBtn.textContent : '';
