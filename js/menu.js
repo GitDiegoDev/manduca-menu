@@ -320,6 +320,12 @@ class CartManager {
         this.updateBadge();
         this.renderCartItems();
         this.updateTotals();
+
+        // Mostrar/ocultar footer del carrito según si hay items
+        const cartFooter = document.querySelector('.cart-footer');
+        if (cartFooter) {
+            cartFooter.style.display = AppState.cart.length > 0 ? 'block' : 'none';
+        }
     }
 
     // Actualizar badge del carrito
@@ -353,7 +359,7 @@ class CartManager {
                         <div class="quantity-control">
                             <button class="btn-quantity" onclick="cart.decrementItem('${item.key}')" 
                                     ${item.quantity <= 1 ? 'disabled' : ''}>
-                                âˆ’
+                                -
                             </button>
                             <span class="quantity-value">${item.quantity}</span>
                             <button class="btn-quantity" onclick="cart.incrementItem('${item.key}')"
@@ -591,48 +597,53 @@ class ProductsManager {
             name: cat.name
         }));
 
-        // ---- PRODUCTS (aplanar categorí­as) ----
-        AppState.products = response.categories.flatMap(cat =>
-        cat.products.map(p => ({
-            id: p.id,
-            type: 'product', //  CLAVE
-            name: p.name,
-            description: p.description,
-            price: parseFloat(p.price_retail),
-            stock: p.stock,
-            unit: 'unidad',
-            category_id: cat.id,
-            category_name: cat.name,
-            low_stock_threshold: p.low_stock_threshold
-        }))
-);
+        // ---- PRODUCTS (aplanar categorías) ----
+        AppState.products = (response.categories || []).flatMap(cat =>
+            (cat.products || []).map(p => ({
+                id: p.id,
+                type: 'product', //  CLAVE
+                name: p.name,
+                description: p.description,
+                price: parseFloat(p.price_retail),
+                stock: p.stock,
+                unit: 'unidad',
+                category_id: cat.id,
+                category_name: cat.name,
+                low_stock_threshold: p.low_stock_threshold
+            }))
+        );
 
         // ---- PLATOS DEL DíA ----
-AppState.dailyDishes = [];
+        AppState.dailyDishes = [];
 
-if (response.daily_dishes && response.daily_dishes.length > 0) {
-    response.daily_dishes.forEach(dish => {
+        if (response.daily_dishes && response.daily_dishes.length > 0) {
+            // Agregar categoría "Plato del día" a la lista de categorías
+            AppState.categories.unshift({
+                id: 'daily',
+                name: 'Plato del día'
+            });
 
-        const dailyProduct = {
-            id: dish.id,
-            type: 'daily',
-            name: dish.name,
-            description: dish.description,
-            price: parseFloat(dish.price),
-            stock: dish.stock,
-            unit: 'unidad',
-            category_id: null,
-            category_name: 'Plato del día',
-            is_daily: true
-        };
+            response.daily_dishes.forEach(dish => {
+                const dailyProduct = {
+                    id: dish.id,
+                    type: 'daily',
+                    name: dish.name,
+                    description: dish.description,
+                    price: parseFloat(dish.price),
+                    stock: dish.stock,
+                    unit: 'unidad',
+                    category_id: 'daily',
+                    category_name: 'Plato del día',
+                    is_daily: true
+                };
 
-        // Guardar en dailyDishes para render especial
-        AppState.dailyDishes.push(dailyProduct);
-        
-        // Agregar a products para carrito, modal y bÃºsquedas
-        AppState.products.push(dailyProduct);
-    });
-}
+                // Guardar en dailyDishes para render especial
+                AppState.dailyDishes.push(dailyProduct);
+
+                // Agregar a products para carrito, modal y búsquedas
+                AppState.products.push(dailyProduct);
+            });
+        }
         // Inicializar productos filtrados
 
         AppState.filteredProducts = [...AppState.products];
@@ -874,15 +885,18 @@ class CategoriesManager {
 
     selectCategory(categoryId) {
         // Actualizar estado
-        AppState.selectedCategory = categoryId === 'all' ? 'all' : parseInt(categoryId);
+        AppState.selectedCategory = categoryId;
         
         // Actualizar UI
         document.querySelectorAll('.category-btn').forEach(btn => {
             btn.classList.remove('active');
         });
-        document.querySelector(`[data-category="${categoryId}"]`).classList.add('active');
+        const activeBtn = document.querySelector(`[data-category="${categoryId}"]`);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
         
-        // Limpiar bÃºsqueda
+        // Limpiar búsqueda
         document.getElementById('searchInput').value = '';
         AppState.searchQuery = '';
         
@@ -896,8 +910,7 @@ class CategoriesManager {
         }
 
         products.render();
-
-            }
+    }
 }
 
 // ============================================
@@ -1094,13 +1107,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Cargar datos iniciales
-    // IMPORTANTE: cargar productos PRIMERO porque allÃ­ se llenan las categorÃ­as desde /api/menu
+    // IMPORTANTE: cargar productos PRIMERO porque allí se llenan las categorías desde /api/menu
     try {
         await products.loadProducts();
         await categories.loadCategories();
+
+        // Inicializar UI del carrito
+        cart.updateUI();
     } catch (error) {
         console.error('Initialization error:', error);
-        cart.showToast('error', 'Error', 'Error al cargar el menÃº');
+        cart.showToast('error', 'Error', 'Error al cargar el menú');
     }
     
 });
