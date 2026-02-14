@@ -7,7 +7,7 @@
 // ============================================
 
 const API_CONFIG = {
-    baseURL: 'http://localhost:8000/api',
+    baseURL: 'https://manduca-backend-production.up.railway.app/api',
 
     endpoints: {
         menu: '/menu'
