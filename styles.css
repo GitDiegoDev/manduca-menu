@@ -173,6 +173,19 @@ input, textarea, select {
     max-height: 80px;
     object-fit: contain;
     display: block;
+    filter:
+        drop-shadow(0 0 2px white)
+        drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))
+        drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+    transition: all var(--transition-base);
+}
+
+.logo-image:hover {
+    filter:
+        drop-shadow(0 0 3px white)
+        drop-shadow(0 0 12px white)
+        drop-shadow(0 0 20px rgba(255, 255, 255, 0.9));
+    transform: scale(1.05);
 }
 
 .logo-accent {
