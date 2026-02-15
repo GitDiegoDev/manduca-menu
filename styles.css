@@ -141,10 +141,10 @@ input, textarea, select {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-image: url('/img/fondo2.webp');
+    background-image: url('img/fondo2.webp');
     background-size: cover;
     background-position: center;
-    background-attachment: scroll;
+    background-attachment: fixed;
     position: relative;
     z-index: 1;
 }
@@ -174,6 +174,7 @@ input, textarea, select {
     object-fit: contain;
     display: block;
     filter:
+        drop-shadow(0 0 1px rgba(0, 0, 0, 0.9))
         drop-shadow(0 0 2px white)
         drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))
         drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
@@ -260,10 +261,10 @@ input, textarea, select {
     max-height: 0;
     overflow: hidden;
     transition: max-height var(--transition-base);
-    background-image: url('/img/fondo2.webp');
+    background-image: url('img/fondo2.webp');
     background-size: cover;
     background-position: center;
-    background-attachment: scroll;
+    background-attachment: fixed;
     position: relative;
 }
 
@@ -402,10 +403,10 @@ input, textarea, select {
     margin: 0 auto;
     padding: var(--spacing-xl) var(--spacing-md);
     min-height: calc(100vh - 200px);
-    background-image: url('/img/fondo2.webp');
+    background-image: url('img/fondo2.webp');
     background-size: cover;
     background-position: center;
-    background-attachment: scroll;
+    background-attachment: fixed;
     position: relative;
 }
 
@@ -789,10 +790,10 @@ input, textarea, select {
 }
 
 .cart-header {
-    background-image: url('/img/fondo2.webp');
+    background-image: url('img/fondo2.webp');
     background-size: cover;
     background-position: center;
-    background-attachment: scroll;
+    background-attachment: fixed;
     position: relative;
     color: var(--color-white);
     padding: var(--spacing-xl) var(--spacing-lg);
