@@ -740,12 +740,14 @@ if (response.daily_dishes && response.daily_dishes.length > 0) {
     createProductCard(product) {
         const hasDiscount = product.discount_price && product.discount_price < product.price;
         const isNew = product.is_new;
+        const isDaily = product.type === 'daily';
         const stockStatus = this.getStockStatus(product.stock);
         
         return `
-            <div class="product-card" 
+            <div class="product-card ${isDaily ? 'daily' : ''}"
      data-id="${product.id}" 
      data-type="${product.type}">
+                ${isDaily ? '<div class="product-badge daily">⭐ Plato del día</div>' : ''}
 
                 <div class="product-content">
                     <div class="product-category">${Utils.escapeHtml(product.category_name)}</div>

@@ -509,6 +509,17 @@ input, textarea, select {
     border: 2px solid var(--color-primary-light);
 }
 
+.product-card.daily {
+    border: 2px solid var(--color-secondary);
+    background: linear-gradient(135deg, var(--bg-soft-yellow) 0%, var(--color-white) 100%);
+    box-shadow: var(--shadow-md), 0 0 15px rgba(255, 193, 7, 0.2);
+}
+
+.product-card.daily:hover {
+    border-color: var(--color-secondary-warm);
+    box-shadow: var(--shadow-xl), 0 0 20px rgba(255, 193, 7, 0.3);
+}
+
 .product-image-container {
     position: relative;
     width: 100%;
@@ -556,6 +567,16 @@ input, textarea, select {
 
 .product-badge.low-stock {
     background: var(--color-warning);
+}
+
+.product-badge.daily {
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-accent) 100%);
+    color: var(--color-gray-900);
+    font-weight: 700;
+    padding: var(--spacing-xs) var(--spacing-lg);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    left: var(--spacing-md);
+    right: auto;
 }
 
 .product-content {
