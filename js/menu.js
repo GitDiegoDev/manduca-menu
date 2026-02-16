@@ -1163,7 +1163,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     whatsappService = new WhatsAppService();
 
      // Configurar número de WhatsApp (¡IMPORTANTE!)
-    whatsappService.setBusinessPhone('54933492509797');
+    whatsappService.setBusinessPhone('33492509797');
 
     // Event Listeners del Header
     document.getElementById('btnSearch').addEventListener('click', () => {
