@@ -910,7 +910,7 @@ class CategoriesManager {
 class WhatsAppService {
     constructor() {
         // Número de WhatsApp del negocio (configurable)
-        this.businessPhone = ' +54 9 3492 50-9797'; // Reemplazar con el número real
+        this.businessPhone = ' 5493492509797'; // Reemplazar con el número real
         this.countryCode = '54'; // Código de país Argentina
     }
 
@@ -1163,7 +1163,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     whatsappService = new WhatsAppService();
 
      // Configurar número de WhatsApp (¡IMPORTANTE!)
-    whatsappService.setBusinessPhone('33492509797');
+    whatsappService.setBusinessPhone('5493492509797');
 
     // Event Listeners del Header
     document.getElementById('btnSearch').addEventListener('click', () => {
