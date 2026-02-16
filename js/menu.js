@@ -157,6 +157,7 @@ class CartManager {
         this.checkoutAddressGroup = document.getElementById('checkoutAddressGroup');
         this.checkoutAddress = document.getElementById('checkoutAddress');
         this.checkoutNotes = document.getElementById('checkoutNotes');
+        this.whatsappLoading = document.getElementById('whatsappLoading');
 
         this.attachCheckoutEvents();
         this.loadFromStorage();
@@ -518,13 +519,26 @@ class CartManager {
             // Después de que el pedido se envíe exitosamente al backend
             this.showToast('success', 'Pedido enviado', 'Tu pedido fue enviado al local');
 
-            // Enviar también por WhatsApp
+            // Mostrar animación de WhatsApp
+            if (this.whatsappLoading) {
+                this.whatsappLoading.classList.add('active');
+            }
+
+            // Enviar también por WhatsApp con un delay para mostrar la animación
             setTimeout(() => {
                 const whatsappSent = whatsappService.sendOrderSmart(orderData);
+
                 if (whatsappSent) {
                     this.showToast('success', 'WhatsApp', 'Abriendo WhatsApp para confirmar...');
                 }
-            }, 500); // Pequeño delay para mejor UX
+
+                // Ocultar la animación después de abrir WhatsApp
+                setTimeout(() => {
+                    if (this.whatsappLoading) {
+                        this.whatsappLoading.classList.remove('active');
+                    }
+                }, 1000);
+            }, 2000);
 
             AppState.cart = [];
             this.saveToStorage();
