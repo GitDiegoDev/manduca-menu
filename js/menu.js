@@ -14,6 +14,55 @@ const API_CONFIG = {
     }
 };
 
+// CONFIGURACION DE SUBCATEGORIAS DE BEBIDAS
+const SUBCATEGORIAS_BEBIDAS = {
+    cafe: {
+      id: 'cafe',
+      nombre: 'Café',
+      icono: '☕',
+      palabrasClave: ['café', 'cafe', 'expreso', 'espresso', 'capuccino', 'cappuccino', 'latte', 'moka', 'mocha', 'americano', 'ristretto', 'lungo']
+    },
+    te: {
+      id: 'te',
+      nombre: 'Té',
+      icono: '🍵',
+      palabrasClave: ['té', 'te', 'infusión', 'infusion', 'mate', 'matcha', 'chai', 'tilo', 'manzanilla', 'jengibre']
+    },
+    jugos: {
+      id: 'jugos',
+      nombre: 'Jugos y Licuados',
+      icono: '🥤',
+      palabrasClave: ['jugo', 'exprimido', 'licuado', 'smoothie', 'batido', 'naranja', 'pomelo', 'limonada', 'naranjada']
+    },
+    otros: {
+      id: 'otros',
+      nombre: 'Otros',
+      icono: '🍺',
+      palabrasClave: [] // Este es el default
+    }
+};
+
+/**
+ * Clasifica un producto en una subcategoría basada en su nombre
+ * @param {string} nombreProducto
+ * @returns {string} ID de la subcategoría
+ */
+function clasificarSubcategoria(nombreProducto) {
+    const nombre = nombreProducto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // sin tildes
+
+    for (const [key, config] of Object.entries(SUBCATEGORIAS_BEBIDAS)) {
+      if (key === 'otros') continue; // El default va al final
+
+      const coincide = config.palabrasClave.some(palabra =>
+        nombre.includes(palabra.toLowerCase())
+      );
+
+      if (coincide) return config.id;
+    }
+
+    return 'otros'; // Default
+}
+
 // Estado global de la aplicaciÃ³n
 const AppState = {
     categories: [],
@@ -22,6 +71,7 @@ const AppState = {
     filteredProducts: [],
     cart: [],
     selectedCategory: 'all',
+    selectedSubcategory: 'todos',
     searchQuery: '',
     isLoading: false
 };
@@ -104,6 +154,55 @@ class Utils {
 
         return '';
     }
+}
+
+/**
+ * Renderiza los filtros de subcategoría para Bebidas
+ */
+function renderSubcategoryFilters() {
+    const container = document.getElementById('subcategoryFiltersContainer');
+    if (!container) return;
+
+    const currentCategory = AppState.categories.find(c => c.id === AppState.selectedCategory);
+    const isBebidas = currentCategory && /bebida|jugo|smoothie|batido/.test(Utils.normalizeText(currentCategory.name));
+
+    if (!isBebidas) {
+        container.innerHTML = '';
+        container.style.display = 'none';
+        return;
+    }
+
+    const filtros = [
+        { id: 'todos', nombre: 'Todos', icono: '🥤' },
+        { id: 'cafe', nombre: 'Café', icono: '☕' },
+        { id: 'te', nombre: 'Té', icono: '🍵' },
+        { id: 'jugos', nombre: 'Jugos y Licuados', icono: '🥤' },
+        { id: 'otros', nombre: 'Otros', icono: '🍺' }
+    ];
+
+    container.innerHTML = `
+        <div class="filtros-bebidas">
+            ${filtros.map(filtro => `
+                <button
+                    class="filtro-btn ${AppState.selectedSubcategory === filtro.id ? 'activo' : ''}"
+                    onclick="handleSubcategoryChange('${filtro.id}')"
+                >
+                    <span>${filtro.icono}</span>
+                    ${filtro.nombre}
+                </button>
+            `).join('')}
+        </div>
+    `;
+    container.style.display = 'block';
+}
+
+/**
+ * Maneja el cambio de subcategoría
+ * @param {string} subcategoryId
+ */
+function handleSubcategoryChange(subcategoryId) {
+    AppState.selectedSubcategory = subcategoryId;
+    products.render();
 }
 
 // ============================================
@@ -689,6 +788,9 @@ if (response.daily_dishes && response.daily_dishes.length > 0) {
     render() {
     let html = '';
 
+    // Renderizar filtros de subcategoría
+    renderSubcategoryFilters();
+
     // ⭐ PLATO DEL DÍA - SOLO EN "TODOS"
     if (AppState.dailyDishes.length > 0 && AppState.selectedCategory === 'all') {
         html += `
@@ -715,6 +817,14 @@ if (response.daily_dishes && response.daily_dishes.length > 0) {
 
     if (hasProducts) {
         let productsToShow = AppState.filteredProducts;
+
+        // Filtrar por subcategoría si estamos en Bebidas
+        const currentCategory = AppState.categories.find(c => c.id === AppState.selectedCategory);
+        const isBebidas = currentCategory && /bebida|jugo|smoothie|batido/.test(Utils.normalizeText(currentCategory.name));
+
+        if (isBebidas && AppState.selectedSubcategory !== 'todos') {
+            productsToShow = productsToShow.filter(p => clasificarSubcategoria(p.name) === AppState.selectedSubcategory);
+        }
 
         // Si estamos en "Todos", no duplicar platos del día que ya se muestran arriba
         if (AppState.selectedCategory === 'all' && AppState.dailyDishes.length > 0) {
@@ -897,6 +1007,7 @@ class CategoriesManager {
     selectCategory(categoryId) {
         // Actualizar estado
         AppState.selectedCategory = categoryId === 'all' ? 'all' : parseInt(categoryId);
+        AppState.selectedSubcategory = 'todos'; // Resetear subcategoría al cambiar de categoría
         
         // Actualizar UI
         document.querySelectorAll('.category-btn').forEach(btn => {
