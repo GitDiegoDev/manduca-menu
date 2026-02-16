@@ -513,7 +513,16 @@ class CartManager {
                 localStorage.setItem('manduca_delivery_address', deliveryAddress);
             }
 
+            // Después de que el pedido se envíe exitosamente al backend
             this.showToast('success', 'Pedido enviado', 'Tu pedido fue enviado al local');
+
+            // Enviar también por WhatsApp
+            setTimeout(() => {
+                const whatsappSent = whatsappService.sendOrderSmart(orderData);
+                if (whatsappSent) {
+                    this.showToast('success', 'WhatsApp', 'Abriendo WhatsApp para confirmar...');
+                }
+            }, 500); // Pequeño delay para mejor UX
 
             AppState.cart = [];
             this.saveToStorage();
@@ -894,7 +903,128 @@ class CategoriesManager {
 
             }
 }
+// ============================================
+// WHATSAPP INTEGRATION
+// ============================================
 
+class WhatsAppService {
+    constructor() {
+        // Número de WhatsApp del negocio (configurable)
+        this.businessPhone = ' 3492 50-9797'; // Reemplazar con el número real
+        this.countryCode = '54'; // Código de país Argentina
+    }
+
+    /**
+     * Configura el número de WhatsApp del negocio
+     * @param {string} phone - Número sin código de país ni espacios
+     */
+    setBusinessPhone(phone) {
+        this.businessPhone = phone;
+    }
+
+    /**
+     * Formatea el mensaje del pedido para WhatsApp
+     * @param {Object} orderData - Datos del pedido
+     * @returns {string} Mensaje formateado
+     */
+    formatOrderMessage(orderData) {
+        const { customer_name, delivery_type, delivery_address, notes, items } = orderData;
+        
+        // Calcular totales
+        const subtotal = items.reduce((sum, item) => 
+            sum + (item.unit_price * item.quantity), 0
+        );
+        
+        // Construir mensaje
+        let message = `🛒 *NUEVO PEDIDO - MANDUCÁ*\n\n`;
+        message += `👤 *Cliente:* ${customer_name}\n`;
+        message += `📍 *Tipo:* ${delivery_type === 'delivery' ? '🚚 Delivery' : '🏪 Retiro en local'}\n`;
+        
+        if (delivery_type === 'delivery' && delivery_address) {
+            message += `🏠 *Dirección:* ${delivery_address}\n`;
+        }
+        
+        message += `\n📦 *PRODUCTOS:*\n`;
+        message += `${'-'.repeat(30)}\n`;
+        
+        items.forEach((item, index) => {
+            const itemTotal = item.unit_price * item.quantity;
+            const typeEmoji = item.type === 'daily' ? '⭐' : '🍽️';
+            message += `${index + 1}. ${typeEmoji} *${item.name}*\n`;
+            message += `   ${item.quantity}x ${Utils.formatPrice(item.unit_price)} = ${Utils.formatPrice(itemTotal)}\n\n`;
+        });
+        
+        message += `${'-'.repeat(30)}\n`;
+        message += `💰 *TOTAL: ${Utils.formatPrice(subtotal)}*\n`;
+        
+        if (notes) {
+            message += `\n📝 *Notas:* ${notes}\n`;
+        }
+        
+        message += `\n🕐 *Hora:* ${new Date().toLocaleString('es-AR', {
+            dateStyle: 'short',
+            timeStyle: 'short'
+        })}`;
+        
+        return message;
+    }
+
+    /**
+     * Envía el pedido por WhatsApp
+     * @param {Object} orderData - Datos del pedido
+     * @returns {boolean} True si se abrió WhatsApp correctamente
+     */
+    sendOrder(orderData) {
+        try {
+            const message = this.formatOrderMessage(orderData);
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${this.businessPhone}?text=${encodedMessage}`;
+            
+            // Abrir WhatsApp en nueva ventana
+            window.open(whatsappUrl, '_blank');
+            
+            return true;
+        } catch (error) {
+            console.error('Error al enviar por WhatsApp:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Versión alternativa usando API de WhatsApp Web
+     * Útil para desktop
+     */
+    sendOrderWeb(orderData) {
+        try {
+            const message = this.formatOrderMessage(orderData);
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://web.whatsapp.com/send?phone=${this.businessPhone}&text=${encodedMessage}`;
+            
+            window.open(whatsappUrl, '_blank');
+            
+            return true;
+        } catch (error) {
+            console.error('Error al enviar por WhatsApp Web:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Detecta si es móvil y usa la URL apropiada
+     */
+    sendOrderSmart(orderData) {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            return this.sendOrder(orderData);
+        } else {
+            return this.sendOrderWeb(orderData);
+        }
+    }
+}
+
+// Instancia global del servicio de WhatsApp
+let whatsappService;
 // ============================================
 // MODAL MANAGER
 // ============================================
@@ -1021,7 +1151,7 @@ function handleProductClick(id, type) {
 }
 
 // ============================================
-// INICIALIZACIÃ“N
+// INICIALIZACIAÓN
 // ============================================
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1030,6 +1160,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     products = new ProductsManager();
     categories = new CategoriesManager();
     modal = new ModalManager();
+    whatsappService = new WhatsAppService();
+
+     // Configurar número de WhatsApp (¡IMPORTANTE!)
+    whatsappService.setBusinessPhone('54933492509797');
 
     // Event Listeners del Header
     document.getElementById('btnSearch').addEventListener('click', () => {
