@@ -80,13 +80,15 @@ class Utils {
             .trim();
     }
 
-    // Obtener icono segÃºn categorÃ­a
+    // Obtener icono según categoría
     static getCategoryIcon(categoryName) {
         const normalized = this.normalizeText(categoryName);
 
-        if (/cafe|cafeteria|te|infusion/.test(normalized)) return '';
+        if (/todo/.test(normalized)) return '🍴';
         if (/bebida|jugo|smoothie|batido/.test(normalized)) return '🥤';
-        if (/desayuno|brunch/.test(normalized)) return '🍳';
+        if (/desayuno|merienda|brunch/.test(normalized)) return '🥐☕';
+        if (/congelado|roll|burrito/.test(normalized)) return '❄️🌯';
+        if (/cafe|cafeteria|te|infusion/.test(normalized)) return '☕';
         if (/almuerzo|cena|comida|menu|plato/.test(normalized)) return '🍽️';
         if (/ensalada|veg|vegetar/.test(normalized)) return '🥗';
         if (/hamburg|sandwich|lomito/.test(normalized)) return '🍔';
@@ -353,7 +355,7 @@ class CartManager {
                         <div class="quantity-control">
                             <button class="btn-quantity" onclick="cart.decrementItem('${item.key}')" 
                                     ${item.quantity <= 1 ? 'disabled' : ''}>
-                                âˆ’
+                                -
                             </button>
                             <span class="quantity-value">${item.quantity}</span>
                             <button class="btn-quantity" onclick="cart.incrementItem('${item.key}')"
