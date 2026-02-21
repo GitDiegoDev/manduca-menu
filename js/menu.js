@@ -791,26 +791,9 @@ if (response.daily_dishes && response.daily_dishes.length > 0) {
     // Renderizar filtros de subcategoría
     renderSubcategoryFilters();
 
-    // ⭐ PLATO DEL DÍA - SOLO EN "TODOS"
-    if (AppState.dailyDishes.length > 0 && AppState.selectedCategory === 'all') {
-        html += `
-            <div class="daily-dishes">
-                <h2 class="section-title">⭐ Plato del día</h2>
-                <div class="products-grid">
-                    ${AppState.dailyDishes.map(p =>
-                        this.createProductCard({
-                            ...p,
-                            category_name: 'Plato del día'
-                        })
-                    ).join('')}
-                </div>
-            </div>
-        `;
-    }
-
     const hasProducts = AppState.filteredProducts.length > 0;
 
-    if (!hasProducts && AppState.dailyDishes.length === 0) {
+    if (!hasProducts) {
         this.showEmpty();
         return;
     }
@@ -824,11 +807,6 @@ if (response.daily_dishes && response.daily_dishes.length > 0) {
 
         if (isBebidas && AppState.selectedSubcategory !== 'todos') {
             productsToShow = productsToShow.filter(p => clasificarSubcategoria(p.name) === AppState.selectedSubcategory);
-        }
-
-        // Si estamos en "Todos", no duplicar platos del día que ya se muestran arriba
-        if (AppState.selectedCategory === 'all' && AppState.dailyDishes.length > 0) {
-            productsToShow = productsToShow.filter(p => p.type !== 'daily');
         }
 
         html += productsToShow
@@ -850,14 +828,12 @@ if (response.daily_dishes && response.daily_dishes.length > 0) {
     createProductCard(product) {
         const hasDiscount = product.discount_price && product.discount_price < product.price;
         const isNew = product.is_new;
-        const isDaily = product.type === 'daily';
         const stockStatus = this.getStockStatus(product.stock);
         
         return `
-            <div class="product-card ${isDaily ? 'daily' : ''}"
+            <div class="product-card"
      data-id="${product.id}" 
      data-type="${product.type}">
-                ${isDaily ? '<div class="product-badge daily">⭐ Plato del día</div>' : ''}
 
                 <div class="product-content">
                     <div class="product-category">${Utils.escapeHtml(product.category_name)}</div>
