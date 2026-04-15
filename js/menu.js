@@ -704,54 +704,65 @@ class ProductsManager {
             );
         }
 
+        // ---- PLATOS DEL DÍA ----
+        AppState.dailyDishes = [];
+        const dailyDishesForGrid = [];
+
+        if (response.daily_dishes && response.daily_dishes.length > 0) {
+            response.daily_dishes.forEach(dish => {
+                if (dish.active === false || dish.show_in_menu === false) return;
+
+                const dailyProduct = {
+                    id: dish.id,
+                    type: 'daily',
+                    name: dish.name,
+                    description: dish.description,
+                    price: parseFloat(dish.price),
+                    stock: dish.stock,
+                    unit: 'unidad',
+                    category_id: 'daily',
+                    category_name: 'Plato del día',
+                    is_daily: true
+                };
+
+                AppState.dailyDishes.push(dailyProduct);
+                dailyDishesForGrid.push(dailyProduct);
+            });
+        }
+
+        // ---- PRODUCTS (aplanar categorías) ----
+        AppState.products = [
+            ...dailyDishesForGrid,
+            ...response.categories.flatMap(cat =>
+                cat.products
+                    .filter(p => p.active !== 0 && p.show_in_menu !== 0)
+                    .map(p => ({
+                        id: p.id,
+                        type: 'product',
+                        name: p.name,
+                        description: p.description,
+                        price: parseFloat(p.price_retail),
+                        stock: p.stock,
+                        unit: 'unidad',
+                        category_id: cat.id,
+                        category_name: cat.name,
+                        low_stock_threshold: p.low_stock_threshold
+                    }))
+            )
+        ];
+
         // ---- CATEGORIES ----
         AppState.categories = response.categories.map(cat => ({
             id: cat.id,
             name: cat.name
         }));
 
-        // ---- PRODUCTS (aplanar categorí­as) ----
-        AppState.products = response.categories.flatMap(cat =>
-        cat.products.map(p => ({
-            id: p.id,
-            type: 'product', //  CLAVE
-            name: p.name,
-            description: p.description,
-            price: parseFloat(p.price_retail),
-            stock: p.stock,
-            unit: 'unidad',
-            category_id: cat.id,
-            category_name: cat.name,
-            low_stock_threshold: p.low_stock_threshold
-        }))
-);
-
-        // ---- PLATOS DEL DíA ----
-AppState.dailyDishes = [];
-
-if (response.daily_dishes && response.daily_dishes.length > 0) {
-    response.daily_dishes.forEach(dish => {
-
-        const dailyProduct = {
-            id: dish.id,
-            type: 'daily',
-            name: dish.name,
-            description: dish.description,
-            price: parseFloat(dish.price),
-            stock: dish.stock,
-            unit: 'unidad',
-            category_id: null,
-            category_name: 'Plato del día',
-            is_daily: true
-        };
-
-        // Guardar en dailyDishes para render especial
-        AppState.dailyDishes.push(dailyProduct);
-        
-        // Agregar a products para carrito, modal y bÃºsquedas
-        AppState.products.push(dailyProduct);
-    });
-}
+        if (AppState.dailyDishes.length > 0) {
+            AppState.categories.unshift({
+                id: 'daily',
+                name: 'Platos del día'
+            });
+        }
         // Inicializar productos filtrados
 
         AppState.filteredProducts = [...AppState.products];
@@ -953,17 +964,17 @@ class CategoriesManager {
         const container = document.getElementById('categoriesNav').querySelector('.categories-container');
         
         const categoriesHTML = AppState.categories.map(category => `
-            <button class="category-btn" data-category="${category.id}">
+            <button class="category-btn ${AppState.selectedCategory === category.id ? 'active' : ''}" data-category="${category.id}">
                 <span class="category-icon" aria-hidden="true">${Utils.getCategoryIcon(category.name)}</span>
                 <span>${Utils.escapeHtml(category.name)}</span>
             </button>
         `).join('');
         
-        // Limpiar categorÃ­as previas y agregar las nuevas
+        // Limpiar categorías previas y agregar las nuevas
         const existingCategories = container.querySelectorAll('.category-btn:not([data-category="all"])');
         existingCategories.forEach(btn => btn.remove());
         
-        // Insertar nuevas categorÃ­as despuÃ©s del botÃ³n "Todos"
+        // Insertar nuevas categorías después del botón "Todos"
         const allButton = container.querySelector('[data-category="all"]');
         allButton.insertAdjacentHTML('afterend', categoriesHTML);
         
@@ -982,7 +993,7 @@ class CategoriesManager {
 
     selectCategory(categoryId) {
         // Actualizar estado
-        AppState.selectedCategory = categoryId === 'all' ? 'all' : parseInt(categoryId);
+        AppState.selectedCategory = categoryId === 'all' || categoryId === 'daily' ? categoryId : parseInt(categoryId);
         AppState.selectedSubcategory = 'todos'; // Resetear subcategoría al cambiar de categoría
         
         // Actualizar UI
@@ -1000,7 +1011,7 @@ class CategoriesManager {
             AppState.filteredProducts = [...AppState.products];
         } else {
             AppState.filteredProducts = AppState.products.filter(
-                p => p.category_id == categoryId
+                p => String(p.category_id) === String(categoryId)
             );
         }
 
