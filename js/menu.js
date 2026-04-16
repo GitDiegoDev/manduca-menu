@@ -34,10 +34,16 @@ const SUBCATEGORIAS_BEBIDAS = {
       icono: '🥤',
       palabrasClave: ['jugo', 'exprimido', 'licuado', 'smoothie', 'batido', 'naranja', 'pomelo', 'limonada', 'naranjada']
     },
+    alcohol: {
+      id: 'alcohol',
+      nombre: 'Con Alcohol',
+      icono: '🍺',
+      palabrasClave: ['cerveza', 'vino', 'birra', 'fernet', 'coctel', 'trago', 'licor', 'champaña', 'espumante', 'malbec', 'cabernet', 'ipa', 'honey']
+    },
     otros: {
       id: 'otros',
-      nombre: 'Otros',
-      icono: '🍺',
+      nombre: 'Agua y Gaseosas',
+      icono: '🥤',
       palabrasClave: [] // Este es el default
     }
 };
@@ -177,7 +183,8 @@ function renderSubcategoryFilters() {
         { id: 'cafe', nombre: 'Café', icono: '☕' },
         { id: 'te', nombre: 'Té', icono: '🍵' },
         { id: 'jugos', nombre: 'Jugos y Licuados', icono: '🥤' },
-        { id: 'otros', nombre: 'Otros', icono: '🍺' }
+        { id: 'alcohol', nombre: 'Con Alcohol', icono: '🍺' },
+        { id: 'otros', nombre: 'Agua y Gaseosas', icono: '🥤' }
     ];
 
     container.innerHTML = `
