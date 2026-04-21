@@ -20,19 +20,25 @@ const SUBCATEGORIAS_BEBIDAS = {
       id: 'cafe',
       nombre: 'Café',
       icono: '☕',
-      palabrasClave: ['café', 'cafe', 'expreso', 'espresso', 'capuccino', 'cappuccino', 'latte', 'moka', 'mocha', 'americano', 'ristretto', 'lungo']
+      palabrasClave: ['café', 'cafe', 'expreso', 'espresso', 'capuccino', 'cappuccino', 'capuchino', 'latte', 'moka', 'mocha', 'americano', 'ristretto', 'lungo']
     },
-    te: {
-      id: 'te',
-      nombre: 'Té',
+    infusiones: {
+      id: 'infusiones',
+      nombre: 'Infusiones',
       icono: '🍵',
-      palabrasClave: ['té', 'te', 'infusión', 'infusion', 'mate', 'matcha', 'chai', 'tilo', 'manzanilla', 'jengibre']
+      palabrasClave: ['té', 'te', 'infusión', 'infusion', 'mate', 'matcha', 'chai', 'tilo', 'manzanilla', 'jengibre', 'mate cocido', 'chocolatada', 'submarino']
     },
     jugos: {
       id: 'jugos',
       nombre: 'Jugos y Licuados',
       icono: '🥤',
       palabrasClave: ['jugo', 'exprimido', 'licuado', 'smoothie', 'batido', 'naranja', 'pomelo', 'limonada', 'naranjada']
+    },
+    sin_alcohol: {
+      id: 'sin_alcohol',
+      nombre: 'Sin Alcohol',
+      icono: '🥤',
+      palabrasClave: ['agua', 'gaseosa', 'soda', 'coca', 'fanta', 'sprite', 'levite', 'aquarius', 'tonica', 'paso de los toros']
     },
     alcohol: {
       id: 'alcohol',
@@ -42,8 +48,8 @@ const SUBCATEGORIAS_BEBIDAS = {
     },
     otros: {
       id: 'otros',
-      nombre: 'Agua y Gaseosas',
-      icono: '🥤',
+      nombre: 'Otros',
+      icono: '✨',
       palabrasClave: [] // Este es el default
     }
 };
@@ -141,6 +147,7 @@ class Utils {
         const normalized = this.normalizeText(categoryName);
 
         if (/todo/.test(normalized)) return '🍴';
+        if (/combo/.test(normalized)) return '🍱';
         if (/bebida|jugo|smoothie|batido/.test(normalized)) return '🥤';
         if (/desayuno|merienda|brunch/.test(normalized)) return '🥐☕';
         if (/congelado|roll|burrito/.test(normalized)) return '❄️🌯';
@@ -181,10 +188,11 @@ function renderSubcategoryFilters() {
     const filtros = [
         { id: 'todos', nombre: 'Todos', icono: '🥤' },
         { id: 'cafe', nombre: 'Café', icono: '☕' },
-        { id: 'te', nombre: 'Té', icono: '🍵' },
+        { id: 'infusiones', nombre: 'Infusiones', icono: '🍵' },
         { id: 'jugos', nombre: 'Jugos y Licuados', icono: '🥤' },
+        { id: 'sin_alcohol', nombre: 'Sin Alcohol', icono: '🥤' },
         { id: 'alcohol', nombre: 'Con Alcohol', icono: '🍺' },
-        { id: 'otros', nombre: 'Agua y Gaseosas', icono: '🥤' }
+        { id: 'otros', nombre: 'Otros', icono: '✨' }
     ];
 
     container.innerHTML = `
