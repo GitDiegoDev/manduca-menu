@@ -20,13 +20,19 @@ const SUBCATEGORIAS_BEBIDAS = {
       id: 'cafe',
       nombre: 'Café',
       icono: '☕',
-      palabrasClave: ['café', 'cafe', 'expreso', 'espresso', 'capuccino', 'cappuccino', 'capuchino', 'latte', 'moka', 'mocha', 'americano', 'ristretto', 'lungo']
+      palabrasClave: ['café', 'cafe', 'expreso', 'espresso', 'capuccino', 'cappuccino', 'capuchino', 'latte', 'moka', 'mocha', 'americano', 'ristretto', 'lungo', 'lagrima', 'cortado']
+    },
+    alcohol: {
+      id: 'alcohol',
+      nombre: 'Con Alcohol',
+      icono: '🍺',
+      palabrasClave: ['cerveza', 'vino', 'birra', 'fernet', 'coctel', 'trago', 'licor', 'champaña', 'espumante', 'malbec', 'cabernet', 'ipa', 'honey']
     },
     infusiones: {
       id: 'infusiones',
       nombre: 'Infusiones',
       icono: '🍵',
-      palabrasClave: ['té', 'te', 'infusión', 'infusion', 'mate', 'matcha', 'chai', 'tilo', 'manzanilla', 'jengibre', 'mate cocido', 'chocolatada', 'submarino']
+      palabrasClave: ['té', 'te', 'infusión', 'infusion', 'mate', 'matcha', 'chai', 'tilo', 'manzanilla', 'jengibre', 'mate cocido']
     },
     jugos: {
       id: 'jugos',
@@ -38,13 +44,7 @@ const SUBCATEGORIAS_BEBIDAS = {
       id: 'sin_alcohol',
       nombre: 'Sin Alcohol',
       icono: '🥤',
-      palabrasClave: ['agua', 'gaseosa', 'soda', 'coca', 'fanta', 'sprite', 'levite', 'aquarius', 'tonica', 'paso de los toros']
-    },
-    alcohol: {
-      id: 'alcohol',
-      nombre: 'Con Alcohol',
-      icono: '🍺',
-      palabrasClave: ['cerveza', 'vino', 'birra', 'fernet', 'coctel', 'trago', 'licor', 'champaña', 'espumante', 'malbec', 'cabernet', 'ipa', 'honey']
+      palabrasClave: ['agua', 'gaseosa', 'soda', 'coca', 'fanta', 'sprite', 'levite', 'aquarius', 'tonica', 'paso de los toros', 'chocolatada', 'submarino']
     },
     otros: {
       id: 'otros',
@@ -65,9 +65,14 @@ function clasificarSubcategoria(nombreProducto) {
     for (const [key, config] of Object.entries(SUBCATEGORIAS_BEBIDAS)) {
       if (key === 'otros') continue; // El default va al final
 
-      const coincide = config.palabrasClave.some(palabra =>
-        nombre.includes(palabra.toLowerCase())
-      );
+      const coincide = config.palabrasClave.some(palabra => {
+        // Normalizar también la palabra clave para la comparación
+        const palabraNormalizada = palabra.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        // Usar regex con límites manuales para evitar falsos positivos como "te" en "artesanal"
+        // \b en JS no siempre funciona bien con caracteres normalizados o acentuados.
+        const regex = new RegExp(`(^|[^a-z])${palabraNormalizada}([^a-z]|$)`, 'i');
+        return regex.test(nombre);
+      });
 
       if (coincide) return config.id;
     }

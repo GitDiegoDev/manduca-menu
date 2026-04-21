@@ -82,8 +82,8 @@ def run_test(page):
             print(f"FAILURE: {sub_name} expected {expected_products}, got {products}")
 
     check_subcategory("Café", ["Capuchino"])
-    check_subcategory("Infusiones", ["Chocolatada", "Mate Cocido"])
-    check_subcategory("Sin Alcohol", ["Coca Cola", "Agua"])
+    check_subcategory("Infusiones", ["Mate Cocido"])
+    check_subcategory("Sin Alcohol", ["Chocolatada", "Coca Cola", "Agua"])
     check_subcategory("Otros", ["Algo Raro"])
     check_subcategory("Con Alcohol", ["Cerveza IPA"])
     check_subcategory("Jugos y Licuados", ["Jugo de Naranja"])
