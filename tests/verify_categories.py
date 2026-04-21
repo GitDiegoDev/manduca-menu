@@ -21,6 +21,7 @@ def run_test(page):
                         {"id": 206, "name": "Cerveza IPA", "price_retail": "2500", "stock": 10, "active": 1, "show_in_menu": 1},
                         {"id": 207, "name": "Jugo de Naranja", "price_retail": "1800", "stock": 10, "active": 1, "show_in_menu": 1},
                         {"id": 208, "name": "Algo Raro", "price_retail": "5000", "stock": 10, "active": 1, "show_in_menu": 1},
+                        {"id": 209, "name": "Submarino", "price_retail": "1500", "stock": 10, "active": 1, "show_in_menu": 1},
                     ]
                 },
                 {
@@ -83,8 +84,8 @@ def run_test(page):
 
     check_subcategory("Café", ["Capuchino"])
     check_subcategory("Infusiones", ["Mate Cocido"])
-    check_subcategory("Sin Alcohol", ["Chocolatada", "Coca Cola", "Agua"])
-    check_subcategory("Otros", ["Algo Raro"])
+    check_subcategory("Sin Alcohol", ["Coca Cola", "Agua"])
+    check_subcategory("Otros", ["Algo Raro", "Chocolatada", "Submarino"])
     check_subcategory("Con Alcohol", ["Cerveza IPA"])
     check_subcategory("Jugos y Licuados", ["Jugo de Naranja"])
 
