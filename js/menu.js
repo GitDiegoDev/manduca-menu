@@ -44,7 +44,7 @@ const SUBCATEGORIAS_BEBIDAS = {
       id: 'sin_alcohol',
       nombre: 'Sin Alcohol',
       icono: '🥤',
-      palabrasClave: ['agua', 'gaseosa', 'soda', 'coca', 'fanta', 'sprite', 'levite', 'aquarius', 'tonica', 'paso de los toros', 'chocolatada', 'submarino']
+      palabrasClave: ['agua', 'gaseosa', 'soda', 'coca', 'fanta', 'sprite', 'levite', 'aquarius', 'tonica', 'paso de los toros']
     },
     otros: {
       id: 'otros',
